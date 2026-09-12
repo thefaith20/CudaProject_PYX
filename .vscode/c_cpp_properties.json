@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**",
                 "/usr/local/cuda-12.8/include",
                 "/usr/include",
-                "/usr/include/x86_64-linux-gnu"
+                "/usr/include/x86_64-linux-gnu",
+                "/usr/include/opencv4"
             ],
             "defines": [],
             "compilerPath": "/usr/local/cuda-12.8/bin/nvcc",
