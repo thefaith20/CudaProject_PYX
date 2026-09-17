@@ -8,7 +8,7 @@ void check_result(float *host_ref, float *dev_ref, const int N)
     int flag = 1;
     for (int i = 0; i < N; ++i)
     {
-        if (abs(host_ref[i] - dev_ref[i]) > var)
+        if (fabs(host_ref[i] - dev_ref[i]) > var)
         {
             flag = 0;
             break;
@@ -80,6 +80,7 @@ int main()
 
     // computing on cpu
     tensor_add_cpu(h_a, h_b, ground_truth, N);
+    printf("开始在CPU上计算...\n");
 
     // copy result memory from gpu to cpu
     cudaMemcpy(h_res, d_res, nBytes, cudaMemcpyDeviceToHost);
