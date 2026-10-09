@@ -53,7 +53,7 @@ float benchmark(const float *d_A, const float *d_B, float *d_C, size_t N, int wa
     // 预热跑几次让 GPU 进入稳定状态
     for (int i = 0; i < warmup_iters; ++i)
         solve(d_A, d_B, d_C, N);
-    cudaDeviceSynchronize(); // 阻塞直至之前发出的 CUDA 指令完成
+    cudaDeviceSynchronize();
 
     // 正式计时
     cudaEventRecord(start);
