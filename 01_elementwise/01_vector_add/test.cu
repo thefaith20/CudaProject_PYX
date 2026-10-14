@@ -13,7 +13,7 @@ __device__ __forceinline__ float4 addFloat4(float4 a, float4 b) // __forceinline
 }
 
 // 算子内核
-__global__ void vectorAdd(const float *__restrict__ A, const float *__restrict__ B, float *__restrict__ C, int N)
+__global__ void vectorAdd(const float *__restrict__ A, const float *__restrict__ B, float *__restrict__ C, size_t N)
 {
     const size_t idx = blockIdx.x * blockDim.x + threadIdx.x;
     const size_t stride = gridDim.x * blockDim.x; // stride 网格跨步循环，可让线程自适应处理更多数据
@@ -34,7 +34,7 @@ __global__ void vectorAdd(const float *__restrict__ A, const float *__restrict__
     }
 }
 
-void solve(const float *A, const float *B, float *C, int N)
+void solve(const float *A, const float *B, float *C, size_t N)
 {
     int blocks = CEIL(N / 4, THREADS);
     if (blocks < 1)
@@ -44,7 +44,7 @@ void solve(const float *A, const float *B, float *C, int N)
 }
 
 // 性能测试函数，返回值：单次平均耗时(ms)
-float benchmark(const float *d_A, const float *d_B, float *d_C, int N, int warmup_iters, int bench_iters)
+float benchmark(const float *d_A, const float *d_B, float *d_C, size_t N, int warmup_iters, int bench_iters)
 {
     cudaEvent_t start, stop;
     cudaEventCreate(&start);
@@ -73,12 +73,12 @@ float benchmark(const float *d_A, const float *d_B, float *d_C, int N, int warmu
 
 int main()
 {
-    const int N = 1 << 24;
+    const size_t N = 1 << 24;
     size_t bytes = N * sizeof(float);
 
     // 分配 CPU 内存
     std::vector<float> h_A(N), h_B(N), h_C(N), h_ref(N);
-    for (int i = 0; i < N; ++i)
+    for (size_t i = 0; i < N; ++i)
     {
         h_A[i] = static_cast<float>(i);
         h_B[i] = 1.f;
@@ -97,10 +97,10 @@ int main()
     solve(d_A, d_B, d_C, N);
     cudaDeviceSynchronize();
     cudaMemcpy(h_C.data(), d_C, bytes, cudaMemcpyDeviceToHost);
-    for (int i = 0; i < N; ++i)
+    for (size_t i = 0; i < N; ++i)
         h_ref[i] = h_A[i] + h_B[i];
     bool ok = true;
-    for (int i = 0; i < N; ++i)
+    for (size_t i = 0; i < N; ++i)
     {
         if (h_ref[i] != h_C[i])
         {
