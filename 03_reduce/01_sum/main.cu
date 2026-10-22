@@ -47,7 +47,7 @@ template <size_t BLOCK_SIZE> __device__ __forceinline__ float blockReduceSum(flo
 }
 
 // ============================================================
-// 算子内核
+// sum 算子内核
 // ============================================================
 
 __device__ __forceinline__ float sum4(float4 a) { return a.x + a.y + a.z + a.w; }
@@ -125,7 +125,7 @@ void run_and_bench(const float *d_in, float *d_out, size_t N, double cpu_sum, in
     double rel_err = fabs((double)gpu_sum - cpu_sum) / (1.0 + fabs(cpu_sum));
     if (rel_err > 1e-4)
     {
-        printf("误差过大, cpu_sum = %.6f, gpu_sum = %.6f\n", cpu_sum, gpu_sum);
+        printf("计算错误, cpu_sum = %.6f, gpu_sum = %.6f\n", cpu_sum, gpu_sum);
         return;
     }
 
@@ -158,7 +158,7 @@ void run_and_bench(const float *d_in, float *d_out, size_t N, double cpu_sum, in
 }
 
 // ============================================================
-// main
+// main 函数
 // ============================================================
 
 int main()

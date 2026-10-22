@@ -28,14 +28,13 @@ __global__ void matrix_transpose_float4(const float *in, float *out, int rows, i
     __syncthreads();
 
     // 阶段 2：从共享内存转置读出，写回全局内存
-    // 输出的行对应输入的列（乘 4 是因为转置后，列变成了连续的 x 跨度）
     int new_x = blockIdx.y * TILE + tx * 4; 
     int new_y = blockIdx.x * TILE + ty;
 
     if (new_x + 3 < rows && new_y < cols) {
         float4 v;
         // 这里从共享内存里读取 4 个相邻行的同一列，拼成一个 float4
-        v.x = tile[tx * 4 + 0][ty];
+        v.x = tile[tx * 4 + 0][ty];   // 每个 warp 4*8 个线程依次对应 bank 0,1,2...31
         v.y = tile[tx * 4 + 1][ty];
         v.z = tile[tx * 4 + 2][ty];
         v.w = tile[tx * 4 + 3][ty];
